@@ -29,7 +29,7 @@
       z-index: -100;
     }
 
-    #card, #solution{
+    #card-front, #card-back{
       border: 1px double #ccc;
       -webkit-box-shadow: 1vh 1vh 2vh rgba(0,0,0,0.3);
       box-shadow: 1vh 1vh 2vh rgba(0,0,0,0.3);
@@ -38,15 +38,11 @@
       max-width: 50%;
       padding: 10vh;
     }
-    #answer-btn, #new-problem-btn{
-      border: 1px double #ccc;
-      font-size: 5vw;
-      margin: 4vh auto;
-      max-width: 50%;
-      padding: 2vh;
-    }
-    #solution, #new-problem-btn{
+    #card-back{
       display: none;
+    }
+    #answer{
+      color: darkgreen;
     }
 
     @media all and (max-width: 600px){
@@ -55,68 +51,102 @@
 </head>
 <body>
 
-  <div id="card">1 x 1</div>
-  <div id="solution">1 x 1 = 1</div>
-  <button id="answer-btn">Show Answer</button>
-  <button id="new-problem-btn">New Problem</button>
+  <div id="card-front">
+    <span id="n1">1</span>&nbsp;x&nbsp;<span id="n2">1</span>
+  </div>
+  <div id="card-back">
+    <span id="n1b">1</span>&nbsp;x&nbsp;<span id="n2b">1</span>&nbsp;=&nbsp;<span id="answer">1</span>
+  </div>
 
   <script>
     //act on page load
     document.addEventListener("DOMContentLoaded", function() {
 
       //make vars
-      var answerBtn = document.getElementById("answer-btn");
-      var cardDiv = document.getElementById("card");
-      var solutionDiv = document.getElementById("solution");
-      var newProblemBtn = document.getElementById("new-problem-btn");
-      var numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]; //choosing to do it this way for clarity
+      //page elements
+      var cardFrontDiv = document.getElementById("card-front");
+      var cardBackDiv = document.getElementById("card-back");
+      var n1 = document.getElementById("n1");
+      var n2 = document.getElementById("n2");
+      var n1b = document.getElementById("n1b");
+      var n2b = document.getElementById("n2b");
+      var answerSpan = document.getElementById("answer");
 
-      //functions (we'll break these up later)
+      var numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]; //choosing to do it this way for clarity
+      var usedStrings = [];
+
+      //functions
       function makeProblem() {
         //show/hide
-        showAndHide(answerBtn, newProblemBtn);
-        showAndHide(cardDiv, solutionDiv);
+        showAndHide(cardFrontDiv, cardBackDiv);
+        //get problem and its parts [n1, n2, ans, pstring, astring]
+        var problemParts = createProblemStrings();
+        //add to card-front div
+        putProblemIntoCard(problemParts[0], problemParts[1], problemParts[2]);
+      }//end makeProblem
+
+      function createProblemStrings() {
         //get numbers from array
         var num1 = numbers[Math.floor(Math.random()*numbers.length)];
         var num2 = numbers[Math.floor(Math.random()*numbers.length)];
         //get solution
         var answer = num1 * num2;
-        //call next function
-        putProblemIntoCard(num1, num2, answer);
-      }//end makeProblem
+        //combine
+        var problemString = num1 + " x " + num2;
+        //stop here if repeating problem
+        checkIfAlreadyUsed(problemString);
+        //return array of values
+        return [num1, num2, answer, problemString];
+      }//end createProblemStrings
+
+      function checkIfAlreadyUsed(problemString) {
+        if (usedStrings.length >= ((numbers.slice(-1)[0]) ** 2)){
+          youveDoneThemAll();
+        } else if (usedStrings.indexOf(problemString) > -1) {
+          createProblemStrings();
+        } else {
+          //add to usedStrings
+          usedStrings.push(problemString);
+          //console.log(usedStrings);
+        }
+      }//end checkIfAlreadyUsed
 
       function putProblemIntoCard(num1, num2, answer) {
-        //make string
-        var problemString = num1 + " x " + num2;
-        //show problem
-        cardDiv.innerHTML = problemString;
-        //call next
-        addSolution(problemString, answer);
+        n1.textContent = num1;
+        n2.textContent = num2;
+        n1b.textContent = num1;
+        n2b.textContent = num2;
+        answerSpan.textContent = answer;
       }//end putProblemIntoCard
 
-      function addSolution(problemString, answer){
-        //make string
-        var answerString = problemString + " = " + answer;
-        //add to hidden div
-        solutionDiv.innerHTML = answerString;
-      }//end addSolution
-
-      function showSolution(answerString){
+      function showSolution(){
         //show/hide
-        showAndHide(solutionDiv, cardDiv);
-        showAndHide(newProblemBtn, answerBtn);
+        showAndHide(cardBackDiv, cardFrontDiv);
       }//end showSolution
 
       function showAndHide(toShow, toHide){
-        //show 
+        //show
         toShow.style.display = "block";
-        //hide 
+        //hide
         toHide.style.display = "none";
-      }//end switchButtons
+      }//end showAndHide
+
+      function youveDoneThemAll() {
+        cardFrontDiv.style.display = "none";
+        cardBackDiv.style.display = "none";
+
+        var finishDiv = document.createElement("div");
+        finishDiv.innerHTML = "You've done them all! Reload to start over.";
+        document.body.appendChild(finishDiv);
+        finishDiv.style.fontSize = "6vh";
+        finishDiv.style.color = "blue";
+
+        usedStrings = [];
+      }//end youveDoneThemAll
 
       //event listeners
-      newProblemBtn.addEventListener("click", makeProblem);
-      answerBtn.addEventListener("click", showSolution);
+      cardFrontDiv.addEventListener("click", showSolution);
+      cardBackDiv.addEventListener("click", makeProblem);
 
       //call function
       makeProblem();
