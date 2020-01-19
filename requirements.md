@@ -1,5 +1,5 @@
 ### Overview
-We want to create a simple page that quizzes the user on the multiplication tables from 1x1 to ~~12x12.~~ 10x10.
+We want to create a simple page that quizzes the user on the multiplication tables from 1x1 to10x10.
 	
 ### Statement of Functionality
 This page will be a simple, clean interface that focuses on multiplication problems on both mobile and desktop browsers. Users can quickly click through problems, or go more slowly as their ability dictates.
