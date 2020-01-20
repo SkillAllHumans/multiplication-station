@@ -25,32 +25,31 @@
       left: 0;
       margin: 0 auto;
       overflow: hidden;
-      text-align: center;
-      z-index: -100;
     }
-
-    #card-front, #card-back{
+    header {
+      text-align: center;
+    }
+    a{
+      color: #222;
+      text-decoration: none;
+    }
+    a:hover{
+      color: #555;
+      text-decoration: underline;
+    }
+    #container{
       border: 1px double #ccc;
       -webkit-box-shadow: 1vh 1vh 2vh rgba(0,0,0,0.3);
       box-shadow: 1vh 1vh 2vh rgba(0,0,0,0.3);
-      font-size: 10vw;
+      font-size: 2vw;
       margin: 0 auto;
+      max-height: 70%;
       max-width: 70%;
       padding: 10vh;
     }
-    #card-front:hover, #card-back:hover{
-      cursor: pointer;
-    }
-    #card-back{
-      display: none;
-    }
-    #answer{
-      color: darkgreen;
-      font-weight: bolder;
-    }
-
+	
     @media all and (max-width: 600px){
-      #card-front, #card-back{
+      #container{
         margin: 10px auto;
         max-width: 85%;
         padding: 5vh;
@@ -60,11 +59,15 @@
 </head>
 <body>
 
-  <div id="card-front">
-    <span id="n1">1</span>&nbsp;x&nbsp;<span id="n2">1</span>
-  </div>
-  <div id="card-back">
-    <span id="n1b">1</span>&nbsp;x&nbsp;<span id="n2b">1</span>&nbsp;=&nbsp;<span id="answer">1</span>
+  <header>
+    <h1>Multiplication Station</h1>
+    <p>Here are different versions as we take a simple idea--a multipication flashcard system--and build on it.</p>
+  </header>
+
+  <div id="container">
+    <ol>
+      <li><a href="version01.html"><strong>Version 01</strong>: A simple click-on-card, randomly-generated version with problem tracking.</a></li>
+    </ol>
   </div>
 
   <script>
@@ -73,93 +76,12 @@
 
       //make vars
       //page elements
-      var cardFrontDiv = document.getElementById("card-front");
-      var cardBackDiv = document.getElementById("card-back");
-      var n1 = document.getElementById("n1");
-      var n2 = document.getElementById("n2");
-      var n1b = document.getElementById("n1b");
-      var n2b = document.getElementById("n2b");
-      var answerSpan = document.getElementById("answer");
-
-      var numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]; //choosing to do it this way for clarity
-      var usedStrings = [];
 
       //functions
-      function makeProblem() {
-        //show/hide
-        showAndHide(cardFrontDiv, cardBackDiv);
-        //get problem and its parts [n1, n2, ans, pstring, astring]
-        var problemParts = createProblemStrings();
-        //add to card-front div
-        putProblemIntoCard(problemParts[0], problemParts[1], problemParts[2]);
-      }//end makeProblem
-
-      function createProblemStrings() {
-        //get numbers from array
-        var num1 = numbers[Math.floor(Math.random()*numbers.length)];
-        var num2 = numbers[Math.floor(Math.random()*numbers.length)];
-        //get solution
-        var answer = num1 * num2;
-        //combine
-        var problemString = num1 + " x " + num2;
-        //stop here if repeating problem
-        checkIfAlreadyUsed(problemString);
-        //return array of values
-        return [num1, num2, answer, problemString];
-      }//end createProblemStrings
-
-      function checkIfAlreadyUsed(problemString) {
-        //check if all have been used, or current has been used, before proceeding
-        if (usedStrings.length >= ((numbers.slice(-1)[0]) ** 2)){
-          youveDoneThemAll();
-        } else if (usedStrings.indexOf(problemString) > -1) {
-          createProblemStrings();
-        } else {
-          //add to usedStrings
-          usedStrings.push(problemString);
-          //console.log(usedStrings);
-        }
-      }//end checkIfAlreadyUsed
-
-      function putProblemIntoCard(num1, num2, answer) {
-        n1.textContent = num1;
-        n2.textContent = num2;
-        n1b.textContent = num1;
-        n2b.textContent = num2;
-        answerSpan.textContent = answer;
-      }//end putProblemIntoCard
-
-      function showSolution(){
-        //show/hide
-        showAndHide(cardBackDiv, cardFrontDiv);
-      }//end showSolution
-
-      function showAndHide(toShow, toHide){
-        //show
-        toShow.style.display = "block";
-        //hide
-        toHide.style.display = "none";
-      }//end showAndHide
-
-      function youveDoneThemAll() {
-        cardFrontDiv.style.display = "none";
-        cardBackDiv.style.display = "none";
-
-        var finishDiv = document.createElement("div");
-        finishDiv.innerHTML = "You've done them all! Reload to start over.";
-        document.body.appendChild(finishDiv);
-        finishDiv.style.fontSize = "6vh";
-        finishDiv.style.color = "blue";
-
-        usedStrings = [];
-      }//end youveDoneThemAll
-
+	  
       //event listeners
-      cardFrontDiv.addEventListener("click", showSolution);
-      cardBackDiv.addEventListener("click", makeProblem);
 
       //call function
-      makeProblem();
 
     });// end document.addEventListener("DOMContentLoaded", function()
 
