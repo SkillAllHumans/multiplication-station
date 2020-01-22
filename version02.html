@@ -168,7 +168,6 @@
             numeralsToUse.push(checkedBoxes[i].value);
           }
         }
-        formDiv.remove();
         makeProblemsArray(numeralsToUse);
       }//end formForNumberChoices
 
@@ -180,6 +179,7 @@
         }//end outer
         //shuffle array
         problemsArray = shuffle(problemsArray);
+        formDiv.remove();
         makeProblem();
       }//end makeProblemsArray
 
