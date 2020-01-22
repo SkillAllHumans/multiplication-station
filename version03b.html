@@ -217,15 +217,20 @@
       function makeProblem() {
         //show/hide
         showAndHide(cardFrontDiv, cardBackDiv);
-          //stop here if done
-          if (problemsArray.length < 1){
-            youveDoneThemAll();
-          } else {
-          //get problem and its parts [n1, n2, ans, pstring, astring]
+        //stop here if done
+        if (problemsArray.length < 1){
+          youveDoneThemAll();
+        } else {
+          //get problem and its parts [n1, operation, n2, ans]
           var problemParts = createProblemStrings();
+          //filter out duds
+          if (problemParts === false) {
+            makeProblem();
+          } else {
           //add to card-front div
           putProblemIntoCard(problemParts[0], problemParts[1], problemParts[2], problemParts[3]);
-        }
+          }//end inner if
+        }//end outer if
       }//end makeProblem
 
       function createProblemStrings() {
@@ -239,8 +244,13 @@
         //get solution
     //IMPORTANT: EVEN THOUGH WE'RE NOT ACCEPTING UNFILTERED USER INPUT, EVAL SHOULD BE SWITCHED OUT SOON
         var answer = eval(problemString);
-        //return array of values
-        return [num1, operation, num2, answer];
+        //remove negative numbers and decimals
+        if (answer >= 0 && Number.isInteger(answer)) {
+          //return array of values
+          return [num1, operation, num2, answer];
+        } else {
+          return false;
+        }
       }//end createProblemStrings
 
       function putProblemIntoCard(num1, operation, num2, answer) {
