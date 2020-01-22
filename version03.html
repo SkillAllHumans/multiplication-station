@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Multiplication Station</title>
+  <title>Math Station</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     html {
@@ -111,7 +111,7 @@
     <input type="checkbox" name="operations" value="/" id="o-div" checked>
     <label for="o-div">&divide;</label>
     <br>
-    <button id="form1-button">Let's get started!</button>
+    <button id="form1-button">Next!</button>
   </div>
   
   <div id="form2">
@@ -239,7 +239,6 @@
         //get solution
     //IMPORTANT: EVEN THOUGH WE'RE NOT ACCEPTING UNFILTERED USER INPUT, EVAL SHOULD BE SWITCHED OUT SOON
         var answer = eval(problemString);
-        console.log(problemString);
         //return array of values
         return [num1, operation, num2, answer];
       }//end createProblemStrings
