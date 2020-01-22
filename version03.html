@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Multiplication Station</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html {
+      height: 100%; /*from https://stackoverflow.com/a/6654996*/
+      width: 100%;
+    }
+    body {
+      min-height: 100%;
+      min-width: 100%;
+      padding: 2%;
+    }
+    html, body {
+      box-sizing: border-box;
+      /*stop text highlighting, from https://css-tricks.com/almanac/properties/u/user-select/*/
+        -webkit-user-select: none;  /* Chrome all / Safari all */
+        -moz-user-select: none;     /* Firefox all */
+        -ms-user-select: none;      /* IE 10+ */
+        user-select: none;          /* Likely future */   
+    
+      left: 0;
+      margin: 0 auto;
+      overflow: hidden;
+      text-align: center;
+      z-index: -100;
+    }
+    footer{
+      bottom: 0;
+      font-size: 2vw;
+      left: 0;
+      margin: 20px;
+      position: fixed;
+      text-align: left;
+      width: 100%;
+    }
+    a{
+      color: #222;
+      text-decoration: none;
+    }
+    a:hover{
+      color: #555;
+      text-decoration: underline;
+    }
+    h2{
+      font-size: 6vh;
+      text-align: center;
+    }
+
+    #form1, #form2, #card-front, #card-back{
+      border: 1px double #ccc;
+      -webkit-box-shadow: 1vh 1vh 2vh rgba(0,0,0,0.3);
+      box-shadow: 1vh 1vh 2vh rgba(0,0,0,0.3);
+      font-size: 10vw;
+      margin: 0 auto;
+      max-width: 70%;
+      padding: 10vh;
+    }
+    #form1, #form2{
+      padding: 1vh;
+    }
+    #card-front:hover, #card-back:hover{
+      cursor: pointer;
+    }
+    #form2, #card-front, #card-back{
+      display: none;
+    }
+    #answer{
+      color: darkgreen;
+      font-weight: bolder;
+    }
+
+    /*checkbox styling*/
+    label {
+      cursor: pointer;
+    }
+    input[type="checkbox"] {
+      opacity: 0;
+      font-size: 8vh;
+    }
+    input[type="checkbox"]:not(:checked) + label {
+      color: rgba(255, 0, 0, 0.5);
+    }
+    input[type="checkbox"]:checked + label {
+      color: rgba(0, 111, 0, 1);
+    }
+
+    /*mobile styling*/
+    @media all and (max-width: 600px){
+      #form1, #form2, #card-front, #card-back{
+        margin: 10px auto;
+        max-width: 85%;
+        padding: 5vh;
+      }
+    }
+  </style>
+</head>
+<body>
+  
+  <div id="form1">
+    <h2>Pick your operation (pink/light is unselected, green/dark is selected).</h2>
+    <input type="checkbox" name="operations" value="+" id="o-add" checked>
+    <label for="o-add">+</label>
+    <input type="checkbox" name="operations" value="-" id="o-sub" checked>
+    <label for="o-sub">-</label>
+    <input type="checkbox" name="operations" value="*" id="o-mult" checked>
+    <label for="o-mult">&times;</label>
+    <input type="checkbox" name="operations" value="/" id="o-div" checked>
+    <label for="o-div">&divide;</label>
+    <br>
+    <button id="form1-button">Let's get started!</button>
+  </div>
+  
+  <div id="form2">
+    <h2>Pick numbers to review (pink/light is unselected, green/dark is selected).</h2>
+    <input type="checkbox" name="numerals" value="1" id="n1" checked>
+    <label for="n1">1</label>
+    <input type="checkbox" name="numerals" value="2" id="n2" checked>
+    <label for="n2">2</label>
+    <input type="checkbox" name="numerals" value="3" id="n3" checked>
+    <label for="n3">3</label>
+    <input type="checkbox" name="numerals" value="4" id="n4" checked>
+    <label for="n4">4</label>
+    <input type="checkbox" name="numerals" value="5" id="n5" checked>
+    <label for="n5">5</label>
+
+    <br>
+
+    <input type="checkbox" name="numerals" value="6" id="n6" checked>
+    <label for="n6">6</label>
+    <input type="checkbox" name="numerals" value="7" id="n7" checked>
+    <label for="n7">7</label>
+    <input type="checkbox" name="numerals" value="8" id="n8" checked>
+    <label for="n8">8</label>
+    <input type="checkbox" name="numerals" value="9" id="n9" checked>
+    <label for="n9">9</label>
+    <input type="checkbox" name="numerals" value="10" id="n10" checked>
+    <label for="n10">10</label>
+    <button id="form2-button">Let's get started!</button>
+  </div>
+
+  <div id="card-front">
+    <span id="n1a">1</span>&nbsp;<span id="n2a">x</span>&nbsp;<span id="n3a">1</span>
+  </div>
+  <div id="card-back">
+    <span id="n1b">1</span>&nbsp;<span id="n2b">x</span>&nbsp;<span id="n3b">1</span>&nbsp;=&nbsp;<span id="answer">1</span>
+  </div>
+
+  <footer>
+    <a href="index.html">Home</a>
+  </footer>
+
+  <script>
+    //act on page load
+    document.addEventListener("DOMContentLoaded", function() {
+
+      //make vars
+      //page elements
+      var cardFrontDiv = document.getElementById("card-front");
+      var cardBackDiv = document.getElementById("card-back");
+      var form1Div = document.getElementById("form1");
+      var form2Div = document.getElementById("form2");
+      var form1DivButton = document.getElementById("form1-button");
+      var form2DivButton = document.getElementById("form2-button");
+      var n1a = document.getElementById("n1a");
+      var n2a = document.getElementById("n2a");
+      var n3a = document.getElementById("n3a")
+      var n1b = document.getElementById("n1b");
+      var n2b = document.getElementById("n2b");
+      var n3b = document.getElementById("n3b")
+      var answerSpan = document.getElementById("answer");
+
+      var problemsArray = [];
+      var numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]; //choosing to do it this way for clarity
+      var numeralsToUse = [];
+      var operations = [];
+
+      //functions
+      function submitForm1() {
+        var checkedBoxes1 = document.querySelectorAll('input[name=operations]:checked');
+        for (var i=0; checkedBoxes1[i]; ++i){
+          if(checkedBoxes1[i].checked){
+            operations.push(checkedBoxes1[i].value);
+          }
+        }
+        form1Div.remove();
+        form2Div.style.display = "block";
+      }//end submitForm1
+
+      function submitForm2() {
+        var checkedBoxes2 = document.querySelectorAll('input[name=numerals]:checked');
+        for (var i=0; checkedBoxes2[i]; ++i){
+          if(checkedBoxes2[i].checked){
+            numeralsToUse.push(checkedBoxes2[i].value);
+          }
+        }
+        form2Div.remove();
+        makeProblemsArray();
+      }//end submitForm2
+
+      function makeProblemsArray() {
+        for (var i = 0; i < numeralsToUse.length; i++) {
+          for (var j = 0; j < numbers.length; j++) {
+            for (var k = 0; k < operations.length; k++) {
+            problemsArray.push([numbers[j], operations[k], parseInt(numeralsToUse[i])]);
+            }//end inner
+          }//end middle
+        }//end outer
+        //shuffle array
+        problemsArray = shuffle(problemsArray);
+        makeProblem();
+      }//end makeProblemsArray
+
+      function makeProblem() {
+        //show/hide
+        showAndHide(cardFrontDiv, cardBackDiv);
+          //stop here if done
+          if (problemsArray.length < 1){
+            youveDoneThemAll();
+          } else {
+          //get problem and its parts [n1, n2, ans, pstring, astring]
+          var problemParts = createProblemStrings();
+          //add to card-front div
+          putProblemIntoCard(problemParts[0], problemParts[1], problemParts[2], problemParts[3]);
+        }
+      }//end makeProblem
+
+      function createProblemStrings() {
+        //get numbers from array
+        var pair = problemsArray.shift();
+        var num1 = pair[0];
+        var operation = pair[1];
+        var num2 = pair[2];
+        //combine
+        var problemString = num1 + operation + num2;
+        //get solution
+    //IMPORTANT: EVEN THOUGH WE'RE NOT ACCEPTING UNFILTERED USER INPUT, EVAL SHOULD BE SWITCHED OUT SOON
+        var answer = eval(problemString);
+        console.log(problemString);
+        //return array of values
+        return [num1, operation, num2, answer];
+      }//end createProblemStrings
+
+      function putProblemIntoCard(num1, operation, num2, answer) {
+        n1a.textContent = num1;
+        n2a.textContent = operation;
+        n3a.textContent = num2;
+        n1b.textContent = num1;
+        n2b.textContent = operation;
+        n3b.textContent = num2;
+        answerSpan.textContent = answer;
+      }//end putProblemIntoCard
+
+      function showSolution(){
+        //show/hide
+        showAndHide(cardBackDiv, cardFrontDiv);
+      }//end showSolution
+
+      function showAndHide(toShow, toHide){
+        //show
+        toShow.style.display = "block";
+        //hide
+        toHide.style.display = "none";
+      }//end showAndHide
+
+      function youveDoneThemAll() {
+        cardFrontDiv.style.display = "none";
+        cardBackDiv.style.display = "none";
+
+        var finishDiv = document.createElement("div");
+        finishDiv.innerHTML = "You've done them all! Reload to start over.";
+        document.body.appendChild(finishDiv);
+        finishDiv.style.fontSize = "6vh";
+        finishDiv.style.color = "blue";
+
+        problemsArray = [];
+        numeralsToUse = [];
+      }//end youveDoneThemAll
+
+
+      function formForNumberChoices() {
+        cardFrontDiv.style.display = "none";
+        cardBackDiv.style.display = "none";
+      }//end formForNumberChoices
+
+      //from https://stackoverflow.com/a/2450976
+      function shuffle(array) {
+        var currentIndex = array.length, temporaryValue, randomIndex;
+
+        // While there remain elements to shuffle...
+        while (0 !== currentIndex) {
+
+          // Pick a remaining element...
+          randomIndex = Math.floor(Math.random() * currentIndex);
+          currentIndex -= 1;
+
+          // And swap it with the current element.
+          temporaryValue = array[currentIndex];
+          array[currentIndex] = array[randomIndex];
+          array[randomIndex] = temporaryValue;
+        }
+
+        return array;
+      }
+
+
+      //event listeners
+      form1DivButton.addEventListener("click", submitForm1);
+      form2DivButton.addEventListener("click", submitForm2);
+      cardFrontDiv.addEventListener("click", showSolution);
+      cardBackDiv.addEventListener("click", makeProblem);
+
+      //call function
+      formForNumberChoices();
+
+    });// end document.addEventListener("DOMContentLoaded", function()
+
+  </script>
+</body>
+</html>
