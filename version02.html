@@ -129,7 +129,7 @@
   </div>
 
   <div id="card-front">
-    <span id="n1">1</span>&nbsp;x&nbsp;<span id="n2">1</span>
+    <span id="n1a">1</span>&nbsp;x&nbsp;<span id="n2a">1</span>
   </div>
   <div id="card-back">
     <span id="n1b">1</span>&nbsp;x&nbsp;<span id="n2b">1</span>&nbsp;=&nbsp;<span id="answer">1</span>
@@ -149,8 +149,8 @@
       var cardBackDiv = document.getElementById("card-back");
       var formDiv = document.getElementById("form");
       var formDivButton = document.getElementById("form-button");
-      var n1 = document.getElementById("n1");
-      var n2 = document.getElementById("n2");
+      var n1 = document.getElementById("n1a");
+      var n2 = document.getElementById("n2a");
       var n1b = document.getElementById("n1b");
       var n2b = document.getElementById("n2b");
       var answerSpan = document.getElementById("answer");
@@ -168,7 +168,7 @@
             numeralsToUse.push(checkedBoxes[i].value);
           }
         }
-        formDiv.style.display = "none";
+        formDiv.remove();
         makeProblemsArray(numeralsToUse);
       }//end formForNumberChoices
 
@@ -213,6 +213,7 @@
       function putProblemIntoCard(num1, num2, answer) {
         n1.textContent = num1;
         n2.textContent = num2;
+        console.log(n1.textContent);
         n1b.textContent = num1;
         n2b.textContent = num2;
         answerSpan.textContent = answer;
